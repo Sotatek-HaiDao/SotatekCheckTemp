@@ -56,6 +56,7 @@ namespace SotatekCheckTemp
                     // Update twin with temperature and humidity fro our raspberry pi>
                     var updateTwinData = new JsonPatchDocument();
                     updateTwinData.AppendReplace("/Temperature", temperature.Value<double>());
+                    log.LogInformation(updateTwinData.ToString());
                     await client.UpdateDigitalTwinAsync(deviceId, updateTwinData);
                 }
             }
