@@ -27,7 +27,7 @@ namespace SotatekCheckTemp
             if (adtInstanceUrl == null) log.LogError("Application setting \"ADT_SERVICE_URL\" not set");
             try
             {
-                var cred = new DefaultAzureCredential();
+                var cred = new ManagedIdentityCredential("https://digitaltwins.azure.net");
 
                 var client = new DigitalTwinsClient(
                 new Uri(adtInstanceUrl),
