@@ -50,10 +50,10 @@ namespace SotatekCheckTemp
                     string deviceId = (string)deviceMessage["systemProperties"]["iothub-connection-device-id"];
                     var temperature = deviceMessage["body"]["Temperature"];
 
-                    //log the temperature and humidity
+                    //log the temperature
                     log.LogInformation($"Device:{deviceId} Temperature is:{temperature}");
 
-                    // Update twin with temperature and humidity fro our raspberry pi>
+                    // Update twin with temperature from raspberry pi>
                     var updateTwinData = new JsonPatchDocument();
                     log.LogInformation(updateTwinData.ToString());
                     updateTwinData.AppendReplace("/Temperature", temperature.Value<double>());
