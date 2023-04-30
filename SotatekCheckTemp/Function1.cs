@@ -72,7 +72,8 @@ public static class Function1
                 // Update twin with temperature from raspberry pi>
                 var updateTwinData = new JsonPatchDocument();
                 log.LogInformation(updateTwinData.ToString());
-                updateTwinData.AppendReplace("/Temperature", temperature);
+                JValue temperatureValue = (JValue)temperature;
+                updateTwinData.AppendReplace("/Temperature", temperatureValue.Value<double>());
                 log.LogInformation(updateTwinData.ToString());
                 await client.UpdateDigitalTwinAsync(deviceId, updateTwinData);
             }
