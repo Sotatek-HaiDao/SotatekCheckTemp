@@ -13,6 +13,7 @@ using Azure.Identity;
 using Azure.DigitalTwins.Core;
 using Azure;
 using System.Threading.Tasks;
+using System.Text;
 
 namespace SotatekCheckTemp
 {
@@ -46,9 +47,20 @@ namespace SotatekCheckTemp
                     // convert the message into a json object
                     JObject deviceMessage = (JObject)JsonConvert.DeserializeObject(eventGridEvent.Data.ToString());
 
+
+                    // Decode the message payload from Base64
+                    byte[] payloadBytes = Convert.FromBase64String(deviceMessage["body"].ToString());
+                    string payloadJson = Encoding.UTF8.GetString(payloadBytes);
+
+                    // Parse the JSON data from the payload
+                    dynamic data = JsonConvert.DeserializeObject(payloadJson);
+
+                    // Extract the temperature data from the JSON data
+                    var temperature = data.temperature;
+
                     // get our device id, temp and humidity from the object
                     string deviceId = (string)deviceMessage["systemProperties"]["iothub-connection-device-id"];
-                    var temperature = deviceMessage["body"]["Temperature"];
+                    //var temperature = deviceMessage["body"]["Temperature"];
 
                     //log the temperature
                     log.LogInformation($"Device:{deviceId} Temperature is:{temperature}");
