@@ -60,7 +60,7 @@ namespace SotatekCheckTemp
                     log.LogInformation($" data is:{data}");
 
                     // Extract the temperature data from the JSON data
-                    var temperature = data.temperature;
+                    var temperature = data.Temperature;
 
                     // get our device id, temp and humidity from the object
                     string deviceId = (string)deviceMessage["systemProperties"]["iothub-connection-device-id"];
