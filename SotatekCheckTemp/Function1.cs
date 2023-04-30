@@ -47,9 +47,9 @@ namespace SotatekCheckTemp
                     // convert the message into a json object
                     JObject deviceMessage = (JObject)JsonConvert.DeserializeObject(eventGridEvent.Data.ToString());
 
-
+                    log.LogInformation($" deviceMessage is:{deviceMessage}");
                     // Decode the message payload from Base64
-                    byte[] payloadBytes = Convert.FromBase64String(deviceMessage["body"].ToString());
+                    var payloadBytes = Convert.FromBase64String((string)deviceMessage["body"]);
                     log.LogInformation($" payloadBytes is:{payloadBytes}");
 
                     string payloadJson = Encoding.UTF8.GetString(payloadBytes);
