@@ -50,10 +50,14 @@ namespace SotatekCheckTemp
 
                     // Decode the message payload from Base64
                     byte[] payloadBytes = Convert.FromBase64String(deviceMessage["body"].ToString());
+                    log.LogInformation($" payloadBytes is:{payloadBytes}");
+
                     string payloadJson = Encoding.UTF8.GetString(payloadBytes);
+                    log.LogInformation($" payloadBytes is:{payloadJson}");
 
                     // Parse the JSON data from the payload
                     dynamic data = JsonConvert.DeserializeObject(payloadJson);
+                    log.LogInformation($" data is:{data}");
 
                     // Extract the temperature data from the JSON data
                     var temperature = data.temperature;
