@@ -1,19 +1,19 @@
 // Default URL for triggering event grid function in the local environment.
 // http://localhost:7071/runtime/webhooks/EventGrid?functionName={functionname}
-using System;
+using Azure;
+using Azure.Core.Pipeline;
+using Azure.DigitalTwins.Core;
+using Azure.Identity;
+using Azure.Messaging.EventGrid;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.EventGrid;
 using Microsoft.Extensions.Logging;
-using Azure.Messaging.EventGrid;
-using Azure.Core.Pipeline;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Net.Http;
-using Azure.Identity;
-using Azure.DigitalTwins.Core;
-using Azure;
-using System.Threading.Tasks;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SotatekCheckTemp;
 
@@ -56,24 +56,27 @@ public static class Function1
                 log.LogInformation($" payloadBytes is:{payloadJson}");
 
                 // Parse the JSON data from the payload
-                var data = JsonConvert.DeserializeObject<SensorInfomation>(payloadJson);
-                log.LogInformation($" data is: {data}");
+                var sensorInfo = JsonConvert.DeserializeObject<SensorInformation>(payloadJson);
+                log.LogInformation($" data is: {sensorInfo}");
 
-                // Extract the temperature data from the JSON data
-                var temperature = data.Temperature;
+                // Extract temperature and humidity
+                var temperature = sensorInfo.Temperature;
+                var humidity = sensorInfo.Humidity;
 
                 // get our device id, temp and humidity from the object
                 string deviceId = (string)deviceMessage["systemProperties"]["iothub-connection-device-id"];
-                //var temperature = deviceMessage["body"]["Temperature"];
 
                 //log the temperature
-                log.LogInformation($"Device:{deviceId} Temperature is:{temperature}");
+                log.LogInformation($"Device:{deviceId} Temperature is:{temperature} and Humidity is:{humidity}");
 
-                // Update twin with temperature from raspberry pi>
+                // Update twin with temperature from sensor>
                 var updateTwinData = new JsonPatchDocument();
                 log.LogInformation(updateTwinData.ToString());
                 JValue temperatureValue = (JValue)temperature;
+                JValue humidityValue = (JValue)humidity;
                 updateTwinData.AppendReplace("/Temperature", temperatureValue.Value<double>());
+                updateTwinData.AppendReplace("/Humidity", humidityValue.Value<double>());
+                await client.UpdateDigitalTwinAsync(deviceId, updateTwinData);
                 log.LogInformation(updateTwinData.ToString());
                 await client.UpdateDigitalTwinAsync(deviceId, updateTwinData);
             }
@@ -87,7 +90,9 @@ public static class Function1
     }
 }
 
-public class SensorInfomation
+public class SensorInformation
 {
     public double Temperature { get; set; }
+
+    public double Humidity { get; set; }
 }
