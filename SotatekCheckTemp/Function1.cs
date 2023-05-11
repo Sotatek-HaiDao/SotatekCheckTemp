@@ -76,7 +76,6 @@ public static class Function1
                 JValue humidityValue = (JValue)humidity;
                 updateTwinData.AppendReplace("/Temperature", temperatureValue.Value<double>());
                 updateTwinData.AppendReplace("/Humidity", humidityValue.Value<double>());
-                await client.UpdateDigitalTwinAsync(deviceId, updateTwinData);
                 log.LogInformation(updateTwinData.ToString());
                 await client.UpdateDigitalTwinAsync(deviceId, updateTwinData);
             }
